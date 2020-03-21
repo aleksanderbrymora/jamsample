@@ -43,6 +43,7 @@ $(document).ready(function() {
 		//CONTROL LISTENERS
 		if (playButton != null) {
 			playButton.click(() => {
+				console.log(isPlaying);
 				togglePlay();
 				if (!isClicked) {
 					gsap.to(vinyl, {
@@ -52,12 +53,31 @@ $(document).ready(function() {
 						},
 						duration: 1,
 					});
-					timeline.to(vinyl, {
-						rotation: 360,
-						duration: 15,
-						ease: 'none',
-						repeat: -1,
-					});
+					timeline
+						.to(vinyl, {
+							rotation: 360,
+							duration: 15,
+							ease: 'none',
+							repeat: 1,
+						})
+						.then(function() {
+							if (isPlaying) {
+								timeline.to(vinyl, {
+									rotation: 360,
+									duration: 15,
+									ease: 'none',
+									repeat: 1,
+								});
+							} else {
+								gsap.to(vinyl, {
+									css: {
+										borderRadius: 0,
+										boxShadow: '0px 0px 15px 0px rgba(0, 0, 0, 0.4)',
+									},
+									duration: 1,
+								});
+							}
+						});
 					isClicked = true;
 				}
 			});
@@ -70,14 +90,12 @@ $(document).ready(function() {
 				$(`#play${sample_id}`)
 					.removeClass('player_pause')
 					.addClass('player_play');
-				timeline.pause();
 				isPlaying = false;
 			} else {
 				player.get(0).play();
 				$(`#play${sample_id}`)
 					.removeClass('player_play')
 					.addClass('player_pause');
-				timeline.resume();
 				isPlaying = true;
 			}
 		}
